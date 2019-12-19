@@ -44,15 +44,16 @@ const EjsJson = require("./gulp/ejs-json");
 ## 3. task定義
 
 ```
-gulp.task('ejsJson', () => {
+gulp.task('ejsJson', (done) => {
     EjsJson(SETTING);
+    done();
 });
 
 
-SETTING.ejsJson.forEach( function(e,i,entryPoint) {
+SETTING.ejsJson.forEach( function(e,i) {
 
-    gulp.watch(SETTING.ejsJson[i].template, ['ejsJson']);
-    gulp.watch(SETTING.ejsJson[i].json, ['ejsJson']);
+    gulp.watch(SETTING.ejsJson[i].template, gulp.task("ejsJson"));
+    gulp.watch(SETTING.ejsJson[i].json, gulp.task("ejsJson"));
 
 });
 
@@ -63,9 +64,10 @@ SETTING.ejsJson.forEach( function(e,i,entryPoint) {
 （ taskListへ記述することで、default起動するようになります。 ）
 
 ```
-const taskList = [
-
-    'ejsJson'
-
-]
+gulp.task(
+    "default",
+    gulp.series(gulp.parallel(
+        'ejsJson'
+    ))
+);
 ```
